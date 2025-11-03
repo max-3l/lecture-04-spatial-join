@@ -31,7 +31,7 @@ def benchmark(implementation_file, points_a, points_b):
 def main(implementations: list, limit: int = None):
     # Load data
     points_a = list(load_uscities("data/uscities.csv"))
-    points_b = list(load_cellular_towers("data/cellular_towers.csv"))
+    points_b = list(load_cellular_towers("data/Cellular_Towers.csv"))
     if limit is not None:
         points_a = points_a[:limit]
         points_b = points_b[:limit]
