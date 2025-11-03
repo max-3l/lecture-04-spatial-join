@@ -13,18 +13,11 @@ def partition(points: List[Point], num_divs: int, full_mbr: MinimalBoundingRecta
         assert(x_coord < num_divs and y_coord < num_divs)
         return x_coord, y_coord
     for point in points:
-        coords = {
-            get_coords(point.mbr.x1, point.mbr.y1), 
-            get_coords(point.mbr.x2, point.mbr.y1), 
-            get_coords(point.mbr.x1, point.mbr.y2), 
-            get_coords(point.mbr.x2, point.mbr.y2)
-        }
-        # print((full_mbr.x2 - full_mbr.x1)/num_divs, (full_mbr.y2 - full_mbr.y1)/num_divs, point.radius)
-        assert((full_mbr.x2 - full_mbr.x1)/num_divs > point.radius)
-        assert((full_mbr.y2 - full_mbr.y1)/num_divs > point.radius)
-        for coord_pair in coords:
-            x_coord, y_coord = coord_pair
-            partitions[x_coord][y_coord].append(point)
+        first_x_coord, first_y_coord = get_coords(point.mbr.x1, point.mbr.y1)
+        last_x_coord, last_y_coord = get_coords(point.mbr.x2, point.mbr.y2)
+        for x_coord in range(first_x_coord, last_x_coord + 1):
+            for y_coord in range(first_y_coord, last_y_coord + 1):
+                partitions[x_coord][y_coord].append(point)
     return partitions
 
 def join(prepared: dict) -> List[Tuple[Point, Point]]:
@@ -44,11 +37,15 @@ def join(prepared: dict) -> List[Tuple[Point, Point]]:
     print("Partitioned!")
     for column_a, column_b in zip(partitions_a, partitions_b):
         for tile_a, tile_b in zip(column_a, column_b):
-            # print(len(tile_a), len(tile_b))
             for point_a in tile_a:
                 result.extend((point_a, point_b) for point_b in tile_b if point_a.mbr.intersects(point_b.mbr))
-    result = list(set(result))
-    # for r in result:
-    #     a, b = r
-    #     print(a,b)
-    return result
+    # Remove duplicates via id since dataset contains duplicates that set() would filter
+    seen = set()
+    unique_result = []
+    for pair in result:
+        pair_id = (id(pair[0]), id(pair[1]))
+        if pair_id not in seen:
+            seen.add(pair_id)
+            unique_result.append(pair)
+    
+    return unique_result
