@@ -30,7 +30,7 @@ mv Cellular_Towers.csv ./data/Cellular_Towers.csv
 
 ```bash
 curl -L -o united-states-cities-database.zip https://www.kaggle.com/api/v1/datasets/download/sergejnuss/united-states-cities-database
-unzip united-states-cities-database.zip
+unzip united-states-cities-database.zip && rm united-states-cities-database.zip
 mv uscities.csv ./data/uscities.csv
 ```
 
